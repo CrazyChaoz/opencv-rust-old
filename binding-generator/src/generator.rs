@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 use clang::diagnostic::{Diagnostic, Severity};
 use clang::{Clang, Entity, EntityKind, Index};
 use dunce::canonicalize;
+use shlex::Shlex;
 
 use crate::entity::WalkAction;
 use crate::type_ref::{CppNameStyle, FishStyle, TypeRef, TypeRefKind};
@@ -431,8 +432,12 @@ impl Generator {
 			.collect::<Vec<_>>();
 		args.push("-DOCVRS_PARSING_HEADERS".into());
 		args.push("-includeocvrs_common.hpp".into());
-		// need to have c++14 here because VS headers contain features that require it
-		args.push("-std=c++14".into());
+		args.push("-std=c++17".into());
+		// allow us to use some custom clang args
+		let clang_arg = env::var_os("OPENCV_CLANG_ARGS");
+		if let Some(clang_arg) = clang_arg.as_ref().and_then(|s| s.to_str()) {
+			args.extend(Shlex::new(clang_arg).map(Cow::Owned));
+		}
 		args
 	}
 
