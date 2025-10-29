@@ -7,6 +7,7 @@ use clang::diagnostic::{Diagnostic, Severity};
 use clang::{Clang, Entity, EntityKind, Index};
 use dunce::canonicalize;
 use shlex::Shlex;
+use std::env;
 
 use crate::entity::WalkAction;
 use crate::type_ref::{CppNameStyle, FishStyle, TypeRef, TypeRefKind};
